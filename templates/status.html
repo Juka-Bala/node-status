@@ -56,8 +56,12 @@
     <ul class="list-group">
         <li class="list-group-item">
             <strong>Sync Percentage:</strong>
-            <span class="{% if bitcoind.sync_percentage >= 99.99 %}green{% else %}yellow{% endif %}">
-                {{ '100.00' if bitcoind.sync_percentage >= 99.99 else '%.2f' % bitcoind.sync_percentage }}%
+            <span class="{% if bitcoind.sync_percentage is not none and bitcoind.sync_percentage >= 99.99 %}green{% else %}yellow{% endif %}">
+                {% if bitcoind.sync_percentage is not none %}
+                    {{ '100.00' if bitcoind.sync_percentage >= 99.99 else '%.2f' % bitcoind.sync_percentage }}%
+                {% else %}
+                    N/A
+                {% endif %}
             </span> |
             <strong>Version:</strong> {{ bitcoind.version }} - {{ bitcoind.subversion }} |
             <strong>Chain:</strong> {{ bitcoind.chain }}
@@ -85,10 +89,28 @@
             </span>
         </li>
         <li class="list-group-item">
-            <strong>Total Balance:</strong> {{ '{:,.0f}'.format(lnd.total_balance) }} satoshis |
-            <strong>Wallet Balance:</strong> {{ '{:,.0f}'.format(lnd.wallet_balance) }} satoshis |
-            <strong>Channels Balance:</strong> {{ '{:,.0f}'.format(lnd.channel_balance) }} satoshis
+            <strong>Total Balance:</strong>
+            {% if lnd.total_balance is not none %}
+                {{ '{:,.0f}'.format(lnd.total_balance) }} satoshis
+            {% else %}
+                N/A
+            {% endif %} |
+
+            <strong>Wallet Balance:</strong>
+            {% if lnd.wallet_balance is not none %}
+                {{ '{:,.0f}'.format(lnd.wallet_balance) }} satoshis
+            {% else %}
+                N/A
+            {% endif %} |
+
+            <strong>Channels Balance:</strong>
+            {% if lnd.channel_balance is not none %}
+                {{ '{:,.0f}'.format(lnd.channel_balance) }} satoshis
+            {% else %}
+                N/A
+            {% endif %}
         </li>
+
         <li class="list-group-item"><strong>Number of Channels:</strong> {{ lnd.number_of_channels }}</li>
         <li class="list-group-item">
             <strong>Number of Active Channels:</strong> {{ lnd.num_active_channels }} |
